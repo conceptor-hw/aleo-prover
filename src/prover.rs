@@ -32,8 +32,8 @@ pub struct Prover {
 
 #[allow(clippy::large_enum_variant)]
 pub enum ProverEvent {
-    NewWork(u64, BlockTemplate<Testnet2>),
     Result(bool, Option<String>),
+    NewWork(u64, BlockTemplate<Testnet2>),
 }
 
 impl Prover {

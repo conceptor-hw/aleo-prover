@@ -172,11 +172,11 @@ async fn main() {
 
     std::thread::sleep(Duration::from_secs(1));
     let mut i = 0;
-    while i <= 10000 {
-        redis_publisher::publish_message(message::Message::new(
+    while i <= 100 {
+        redis_publisher::publish_message(message::PubSubMessage::new(
             message::Order::new("message from rust".to_string(), 0, i),
             "rust_channel".to_string(),
-        ))?;
+        )).unwrap();
 
         std::thread::sleep(Duration::from_secs(1));
         i = i + 1;
