@@ -1,8 +1,6 @@
-use crate::message::PubSubMessage;
+use crate::message::ProverMessage;
 
-pub fn handle(message: PubSubMessage) {
-    println!(
-        "subscribe: id{} channel {} desciption {} index:{}",
-        message.id, message.channel, message.payload.description, message.payload.index,
-    );
+
+pub fn handle_pubsub_messsage(message: ProverMessage) {
+    println!("subscribe handle is : id{:?} ", message);
 }

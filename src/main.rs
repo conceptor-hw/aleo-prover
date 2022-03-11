@@ -6,7 +6,6 @@ mod message_handler;
 mod redis_publisher;
 mod redis_subscriber;
 
-use std::time::Duration;
 use std::{net::ToSocketAddrs, sync::Arc};
 
 use snarkvm::dpc::{testnet2::Testnet2, Account, Address};
@@ -161,27 +160,10 @@ async fn main() {
     debug!("Prover initialized");
 
     // start subscribe for redis
-    if let Err(error) = redis_subscriber::subscribe(String::from("go_channel")) {
-        println!("{:?}", error);
-        panic!("{:?}", error);
-    } else {
-        println!("connected to queue");
-    }
+    redis_subscriber::start().unwrap();
+
 
     start(prover.sender(), client.clone());
-
-    std::thread::sleep(Duration::from_secs(1));
-    let mut i = 0;
-    while i <= 100 {
-        redis_publisher::publish_message(message::PubSubMessage::new(
-            message::Order::new("message from rust".to_string(), 0, i),
-            "rust_channel".to_string(),
-        )).unwrap();
-
-        std::thread::sleep(Duration::from_secs(1));
-        i = i + 1;
-    }
-
     std::future::pending::<()>().await;
 }
 

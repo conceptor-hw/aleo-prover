@@ -92,6 +92,7 @@ pub fn start(prover_sender: Arc<Sender<ProverEvent>>, client: Arc<Client>) {
                                                 }
                                             }
                                             ProverMessage::Notify(block_template, share_difficulty) => {
+                                                info!("Notify from pool server ######: {}", share_difficulty);
                                                 if let Err(e) = prover_sender.send(ProverEvent::NewWork(share_difficulty, block_template)).await {
                                                     error!("Error sending work to prover: {}", e);
                                                 } else {

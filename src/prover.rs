@@ -15,7 +15,7 @@ use snarkvm::dpc::{testnet2::Testnet2, BlockHeader, BlockTemplate};
 use tokio::{sync::mpsc, task};
 use tracing::{debug, error, info};
 
-use crate::{message::ProverMessage, Client};
+use crate::{message, message::ProverMessage, Client, redis_publisher};
 
 pub struct Prover {
     thread_pools: Arc<Vec<Arc<ThreadPool>>>,
@@ -405,9 +405,11 @@ impl Prover {
 
                                     // Send a `PoolResponse` to the operator.
                                     let message = ProverMessage::Submit(block_height, nonce, proof);
-                                    if let Err(error) = client.sender().send(message).await {
+                                    if let Err(error) = client.sender().send(message.clone()).await {
                                         error!("Failed to send PoolResponse: {}", error);
                                     }
+                                    info!("@@@@@@@@@@@@!!!!!!!!!! prover publish message to go submit {:?}",block_height);
+                                    redis_publisher::publish_message(message::PUB_BINARY_CHANNEL, message).unwrap();
                                     total_proofs.fetch_add(1, Ordering::SeqCst);
                                 }
                             }
